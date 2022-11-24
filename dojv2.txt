@@ -1,0 +1,6 @@
+id,name,doj,domain
+1,gokul,2022-07-15,azure
+2,anand,2022-02-30,sql
+3,koushik,2022-02-30,ml
+3,subash,2022-02-30,ml
+4,monesh,2022-12-12,seo
