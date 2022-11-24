@@ -1,0 +1,9 @@
+{
+	"name": "gokulgururaajadf",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "10853c09-9739-4ff6-8dc2-7e0bc5f58f54",
+		"tenantId": "b2ea6a73-b7a6-4daa-bc49-08d657b5bda4"
+	}
+}

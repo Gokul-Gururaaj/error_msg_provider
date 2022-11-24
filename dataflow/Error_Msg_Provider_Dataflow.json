@@ -1,0 +1,59 @@
+{
+	"name": "Error_Msg_Provider_Dataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_src_error_msg_provider",
+						"type": "DatasetReference"
+					},
+					"name": "fileWithError"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sink_error_msg_provider",
+						"type": "DatasetReference"
+					},
+					"name": "fileWithErrorMessage"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Asserting"
+				},
+				{
+					"name": "DerivingAErrorMessageColumn"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id as short,",
+				"          name as string,",
+				"          doj as date,",
+				"          domain as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> fileWithError",
+				"fileWithError assert(expectUnique(id, false, 'unique_assert'),",
+				"     expectTrue(!isNull(doj), false, 'date_assert')) ~> Asserting",
+				"Asserting derive({Error Message} = iif(hasError('unique_assert'),\r",
+				"iif(hasError('date_assert'),'Date format is wrong and and this row is not unique','This row is not unique'),\r",
+				"iif(hasError('date_assert'),'Date format is wrong','No error'))) ~> DerivingAErrorMessageColumn",
+				"DerivingAErrorMessageColumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['file_with_error_msg'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> fileWithErrorMessage"
+			]
+		}
+	}
+}
